@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-    
     prometheus:
         image: prom/prometheus:v2.1.0
         ports:
@@ -54,7 +53,6 @@ services:
             labels:
                 com.docker.stack.namespace: "monitoring"
                 com.docker.service.name: "cadvisor"
-
     node-exporter:
         image: basi/node-exporter:v1.15.0
         ports:
@@ -86,8 +84,7 @@ services:
                 max_attempts: 5
             labels:
                 com.docker.stack.namespace: "monitoring"
-                com.docker.service.name: "node-exporter"              
-
+                com.docker.service.name: "node-exporter"
     alertmanager:
         image: prom/alertmanager
         ports:
@@ -96,7 +93,7 @@ services:
             - monitoring
         volumes:
             - ./alertmanager/alertmanagerconfig.yml:/etc/alertmanager/alertmanagerconfig.yml
-            - ./alertmanager/data:/etc/alertmanager/data
+            - alertmanager-data:/etc/alertmanager/data
         command: [--config.file=/etc/alertmanager/alertmanagerconfig.yml,--storage.path=/etc/alertmanager/data]
         labels:
             com.docker.stack.namespace: "monitoring"
@@ -113,40 +110,6 @@ services:
             labels:
                 com.docker.stack.namespace: "monitoring"
                 com.docker.service.name: "alertmanager"
-    
-    elastalert:
-        image: ivankrizsan/elastalert:0.1.8
-        ports:
-            - "3030:3030"
-        networks:
-            - logging
-        environment:
-            - ELASTALERT_CONFIG=elastalertconfig.yaml
-            - CONFIG_DIR=/opt/config
-            - LOG_DIR=/opt/logs
-            - ELASTALERT_CONFIG=/opt/config/elastalertconfig.yaml
-            - ELASTICSEARCH_PORT=9200
-            - ELASTICSEARCH_HOST=logging_elasticsearch
-            - ELASTALERT_SUPERVISOR_CONF=/opt/config/elastalert_supervisord.conf
-        volumes:
-            - ./elastalert/config:/opt/config
-            - ./elastalert/rules:/opt/rules
-        labels:
-            com.docker.stack.namespace: "monitoring"
-            com.docker.service.name: "elastalert"
-        deploy:
-            mode: replicated
-            replicas: 1
-            update_config:
-                parallelism: 1
-                delay: 60s
-            restart_policy:
-                condition: on-failure
-                max_attempts: 5
-            labels:
-                com.docker.stack.namespace: "monitoring"
-                com.docker.service.name: "elastalert"            
-
     grafana:
         image: grafana/grafana
         ports:
@@ -215,4 +178,6 @@ networks:
 
 volumes:
     prometheus-data:
+        driver: local
+    alertmanager-data:
         driver: local

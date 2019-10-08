@@ -101,6 +101,39 @@ services:
                 com.docker.stack.namespace: "logging"
                 com.docker.service.name: "kibana"
 
+    elastalert:
+        image: ivankrizsan/elastalert:0.1.8
+        ports:
+            - "3030:3030"
+        networks:
+            - logging
+        environment:
+            - ELASTALERT_CONFIG=elastalertconfig.yaml
+            - CONFIG_DIR=/opt/config
+            - LOG_DIR=/opt/logs
+            - ELASTALERT_CONFIG=/opt/config/elastalertconfig.yaml
+            - ELASTICSEARCH_PORT=9200
+            - ELASTICSEARCH_HOST=elasticsearch
+            - ELASTALERT_SUPERVISOR_CONF=/opt/config/elastalert_supervisord.conf
+        volumes:
+            - ./elastalert/config:/opt/config
+            - ./elastalert/rules:/opt/rules
+        labels:
+            com.docker.stack.namespace: "monitoring"
+            com.docker.service.name: "elastalert"
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: on-failure
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "monitoring"
+                com.docker.service.name: "elastalert"    
+
 networks:
     logging:
         external: true
