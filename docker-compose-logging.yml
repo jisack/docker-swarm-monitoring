@@ -73,7 +73,7 @@ services:
                 com.docker.service.name: "logstash"
 
     kibana:
-        image: kibana
+        image: kibana:7.4.0
         depends_on:
             - elasticsearch
         ports:
