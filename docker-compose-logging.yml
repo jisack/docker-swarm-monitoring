@@ -2,7 +2,7 @@ version: "3"
 
 services:
     elasticsearch:
-        image: elasticsearch/elasticsearch
+        image: elasticsearch:7.4.0
         networks:
             - logging
         volumes:
@@ -48,7 +48,7 @@ services:
                 com.docker.service.name: "curator"
 
     logstash:
-        image: logstash
+        image: logstash:7.4.0
         depends_on:
             - elasticsearch
         ports:
