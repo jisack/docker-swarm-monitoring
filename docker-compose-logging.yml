@@ -15,6 +15,7 @@ services:
             com.docker.service.name: "elasticsearch"
         deploy:
             mode: replicated
+            replicas: 1
             update_config:
                 parallelism: 1
                 delay: 60s
