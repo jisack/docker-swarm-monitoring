@@ -5,8 +5,11 @@ services:
         image: elasticsearch:7.4.0
         networks:
             - logging
+        ports:
+            - "9200:9200"
         volumes:
             - elasticsearch-data:/usr/share/elasticsearch/data
+            - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
         labels:
             com.docker.stack.namespace: "logging"
             com.docker.service.name: "elasticsearch"
@@ -21,7 +24,6 @@ services:
             labels:
                 com.docker.stack.namespace: "logging"
                 com.docker.service.name: "elasticsearch"
-
     curator:
         image: robinong79/docker-elasticsearch-curator:v1.0
         networks:
@@ -46,7 +48,6 @@ services:
             labels:
                 com.docker.stack.namespace: "logging"
                 com.docker.service.name: "curator"
-
     logstash:
         image: logstash:7.4.0
         depends_on:
