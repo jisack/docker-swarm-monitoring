@@ -11,7 +11,7 @@ services:
             - discovery.type=single-node
         volumes:
             - elasticsearch-data:/usr/share/elasticsearch/data
-            - ./elasticsearch/config:/usr/share/elasticsearch/config
+            - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
         labels:
             com.docker.stack.namespace: "logging"
             com.docker.service.name: "elasticsearch"
