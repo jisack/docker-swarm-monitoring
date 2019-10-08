@@ -7,9 +7,11 @@ services:
             - logging
         ports:
             - "9200:9200"
+        environment:
+            - discovery.type=single-node
         volumes:
             - elasticsearch-data:/usr/share/elasticsearch/data
-            - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+            - ./elasticsearch/config:/usr/share/elasticsearch/config
         labels:
             com.docker.stack.namespace: "logging"
             com.docker.service.name: "elasticsearch"
