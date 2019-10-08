@@ -9,7 +9,7 @@ services:
         networks:
             - monitoring
         volumes:
-            - ./prometheus/data:/prometheus
+            - prometheus-data:/prometheus
             - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
             - ./prometheus/rules:/etc/prometheus-rules
         command: "--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus --web.console.libraries=/etc/prometheus/console_libraries --web.console.templates=/etc/prometheus/consoles"
@@ -126,12 +126,11 @@ services:
             - LOG_DIR=/opt/logs
             - ELASTALERT_CONFIG=/opt/config/elastalertconfig.yaml
             - ELASTICSEARCH_PORT=9200
-            - ELASTICSEARCH_HOST=elasticsearch
+            - ELASTICSEARCH_HOST=logging_elasticsearch
             - ELASTALERT_SUPERVISOR_CONF=/opt/config/elastalert_supervisord.conf
         volumes:
             - ./elastalert/config:/opt/config
             - ./elastalert/rules:/opt/rules
-            - ./elastalert/logs:/opt/logs
         labels:
             com.docker.stack.namespace: "monitoring"
             com.docker.service.name: "elastalert"
@@ -155,9 +154,11 @@ services:
         networks:
             - monitoring
             - logging
-        volumes:
-            - ./grafana:/var/lib/grafana
-        command: -e "GF_SERVER_ROOT_URL=http://grafana.local.com GF_SECURITY_ADMIN_PASSWORD=admin PROMETHEUS_ENDPOINT=http://prometheus:9090 ELASTICSEARCH_ENDPOINT=http://elasticsearch:9200"
+        environment: 
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+            - GF_SERVER_ROOT_URL=http://grafana.local.com
+            - PROMETHEUS_ENDPOINT=http://prometheus:9090
+            - ELASTICSEARCH_ENDPOINT=http://logging_elasticsearch:9200
         labels:
             com.docker.stack.namespace: "monitoring"
             com.docker.service.name: "grafana"
@@ -211,3 +212,7 @@ networks:
         external: true
     monitoring:
         external: true
+
+volumes:
+    prometheus-data:
+        driver: local

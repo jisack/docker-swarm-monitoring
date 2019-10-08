@@ -1,13 +1,12 @@
 version: "3"
 
 services:
-    
     elasticsearch:
         image: elasticsearch
         networks:
             - logging
         volumes:
-            - ./elasticsearch/data:/usr/share/elasticsearch/data
+            - elasticsearch-data:/usr/share/elasticsearch/data
         labels:
             com.docker.stack.namespace: "logging"
             com.docker.service.name: "elasticsearch"
@@ -46,14 +45,14 @@ services:
                 max_attempts: 5
             labels:
                 com.docker.stack.namespace: "logging"
-                com.docker.service.name: "curator"                   
+                com.docker.service.name: "curator"
 
     logstash:
         image: logstash:latest
         depends_on:
             - elasticsearch
         ports:
-            - "12201:12201/udp"         
+            - "12201:12201/udp"
             - "8080:8082"
         networks:
             - logging
@@ -76,9 +75,9 @@ services:
     kibana:
         image: kibana
         depends_on:
-            - elasticsearch        
+            - elasticsearch
         ports:
-            - "5601:5601"          
+            - "5601:5601"
         networks:
             - logging
         environment:
@@ -96,9 +95,12 @@ services:
                 max_attempts: 5
             labels:
                 com.docker.stack.namespace: "logging"
-                com.docker.service.name: "kibana"                
+                com.docker.service.name: "kibana"
 
 networks:
     logging:
         external: true
 
+volumes:
+    elasticsearch-data:
+        driver: local`
