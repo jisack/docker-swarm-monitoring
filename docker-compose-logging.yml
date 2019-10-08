@@ -48,7 +48,7 @@ services:
                 com.docker.service.name: "curator"
 
     logstash:
-        image: logstash:latest
+        image: logstash
         depends_on:
             - elasticsearch
         ports:
@@ -103,4 +103,4 @@ networks:
 
 volumes:
     elasticsearch-data:
-        driver: local`
+        driver: local
